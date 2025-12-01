@@ -65,14 +65,24 @@ The application will be available at `http://localhost:3000`.
 ## 📖 How to Use
 
 1.  **Connect Wallet**: Click the "Connect Wallet" button in the top right corner.
-2.  **Request Test Tokens**: Use the "Faucet" button (if available) or your wallet to get SUI testnet tokens.
-3.  **Swap**: Go to the "Swap" tab to exchange assets.
-4.  **Add Liquidity**:
+2.  **Switch to Testnet**: Ensure your Sui Wallet is connected to the **Sui Testnet**.
+3.  **Request Test Tokens**: Use the "Faucet" button in your wallet or the app to get SUI testnet tokens.
+4.  **Swap**: Go to the "Swap" tab to exchange assets.
+5.  **Add Liquidity**:
     *   Navigate to the "Pools" tab.
     *   Select a pool or create a new one.
     *   Enter amounts and confirm to mint your LP Position NFT.
-5.  **Manage Positions**:
+6.  **Manage Positions**:
+    *   Go to the "Positions" tab.
+    *   View your NFT cards.
+    *   Click on a card to view details or remove liquidity.
 
+## ❓ Troubleshooting
+
+*   **Wallet Not Connecting**: Ensure you have the Sui Wallet extension installed and unlocked. Refresh the page if necessary.
+*   **Transaction Failed**: Check if you have enough SUI for gas fees. Ensure you are on the **Testnet**.
+*   **Positions Not Showing**: If you redeployed the contract, old positions from previous package IDs will not appear. You must add new liquidity.
+*   **Build Errors**: If `npm install` fails, try deleting `node_modules` and `package-lock.json` and running `npm install` again.
 
 ## 🏆 Hackathon Submission Details
 
@@ -83,8 +93,6 @@ The application will be available at `http://localhost:3000`.
 *   **Network**: Sui Testnet
 
 ### 🧪 Proof of Functionality
-
-The following core AMM features have been fully implemented and verified on the Sui Testnet:
 
 | Feature | Status | Description |
 | :--- | :--- | :--- |
