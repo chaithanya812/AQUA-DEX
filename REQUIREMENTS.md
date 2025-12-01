@@ -12,24 +12,25 @@ This file lists all the dependencies and tools required to run the AquaSwap proj
 These are automatically installed when you run `npm install` in the `frontend` directory.
 
 ### Core Framework
-*   `next`: 14.2.3
-*   `react`: 18.3.1
-*   `react-dom`: 18.3.1
-*   `typescript`: 5.4.5
+*   `next`: 16.0.5
+*   `react`: 19.2.0
+*   `react-dom`: 19.2.0
+*   `typescript`: ^5 (Dev Dependency)
 
 ### Sui Integration
-*   `@mysten/dapp-kit`: ^0.14.7
-*   `@mysten/sui`: ^1.2.0
-*   `@tanstack/react-query`: ^5.32.0
+*   `@mysten/dapp-kit`: ^0.19.9
+*   `@mysten/sui`: ^1.45.0
+*   `@tanstack/react-query`: ^5.90.11
 
 ### UI Components & Styling
-*   `tailwindcss`: ^3.4.1
-*   `lucide-react`: ^0.378.0
-*   `class-variance-authority`: ^0.7.0
+*   `tailwindcss`: ^4.0.0 (Dev Dependency)
+*   `lucide-react`: ^0.555.0
+*   `class-variance-authority`: ^0.7.1
 *   `clsx`: ^2.1.1
-*   `tailwind-merge`: ^2.3.0
-*   `sonner`: ^1.4.41 (Toast notifications)
-*   `recharts`: ^2.12.7 (Charts)
+*   `tailwind-merge`: ^3.4.0
+*   `sonner`: ^2.0.7 (Toast notifications)
+*   `recharts`: ^3.5.1 (Charts)
+*   `next-themes`: ^0.4.6
 
 ### Radix UI Primitives (Headless UI)
 *   `@radix-ui/react-dialog`
@@ -43,9 +44,10 @@ These are automatically installed when you run `npm install` in the `frontend` d
 *   `@radix-ui/react-avatar`
 *   `@radix-ui/react-separator`
 *   `@radix-ui/react-dropdown-menu`
+*   `@radix-ui/react-radio-group`
 
 ### State Management
-*   `zustand`: ^4.5.2
+*   `zustand`: ^5.0.8
 
 ## 3. Smart Contract Dependencies (`contracts/amm/Move.toml`)
 These are handled by the Sui Move compiler.

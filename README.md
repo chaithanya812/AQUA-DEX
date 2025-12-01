@@ -28,6 +28,8 @@ Before you begin, ensure you have the following installed:
 2.  **Sui CLI**: [Install Guide](https://docs.sui.io/guides/developer/getting-started/sui-install)
 3.  **Sui Wallet**: Browser extension for interacting with the app.
 
+For a detailed list of frontend and contract dependencies, please refer to [REQUIREMENTS.md](./REQUIREMENTS.md).
+
 ## ⚙️ Installation & Setup
 
 ### 1. Smart Contracts (Pre-deployed)
