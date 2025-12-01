@@ -30,22 +30,27 @@ Before you begin, ensure you have the following installed:
 
 ## ⚙️ Installation & Setup
 
-### 1. Smart Contracts (Optional if using deployed version)
+### 1. Smart Contracts (Pre-deployed)
 
-If you want to deploy your own version of the contracts:
+The smart contracts are **already deployed** on the Sui Testnet. You do **not** need to deploy them yourself to test the application.
+
+*   **Package ID**: `0x01e8a2098a6ad53f95679263837ff5f1a46c7795283b213fb471b66a4d50480a`
+*   **Network**: Sui Testnet
+
+The frontend is already configured to use this deployment.
+
+**(Optional) Only if you wish to redeploy the contracts yourself:**
 
 ```bash
 # Navigate to the contracts directory
 cd contracts/amm
 
-# Build the contracts
+# Build and Publish
 sui move build
-
-# Publish to Sui Testnet
 sui client publish --gas-budget 100000000 --json > publish_output.json
-```
 
-*Note: After publishing, you need to update the `PACKAGE_ID` in `frontend/lib/sui/config.ts` with your new package ID.*
+# IMPORTANT: If you redeploy, you MUST update the PACKAGE_ID in frontend/lib/sui/config.ts
+```
 
 ### 2. Frontend Application
 
