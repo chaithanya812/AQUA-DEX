@@ -1,0 +1,198 @@
+/// Pool Factory Module
+/// Creates and manages liquidity pools for token pairs
+module amm::pool_factory {
+    use sui::object::{Self, UID, ID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+    use sui::event;
+    use sui::table::{Self, Table};
+    use std::type_name::{Self, TypeName};
+
+    /// Error codes
+    const E_POOL_ALREADY_EXISTS: u64 = 1;
+    const E_INVALID_FEE_TIER: u64 = 2;
+    const E_IDENTICAL_TOKENS: u64 = 3;
+    const E_ZERO_ADDRESS: u64 = 4;
+
+    /// Fee tier constants (in basis points: 1 bp = 0.01%)
+    const FEE_TIER_LOW: u64 = 5;      // 0.05%
+    const FEE_TIER_MEDIUM: u64 = 30;   // 0.3%
+    const FEE_TIER_HIGH: u64 = 100;    // 1%
+
+    /// Pool Registry - Shared object that tracks all pools
+    public struct PoolRegistry has key {
+        id: UID,
+        /// Maps (token_a, token_b, fee_tier) -> pool_id
+        pools: Table<vector<u8>, ID>,
+        /// Total number of pools created
+        pool_count: u64,
+    }
+
+    /// Pool configuration
+    public struct PoolConfig has store {
+        token_a: TypeName,
+        token_b: TypeName,
+        fee_tier: u64,
+        pool_id: ID,
+    }
+
+    /// Events
+    public struct PoolCreated has copy, drop {
+        pool_id: ID,
+        token_a: TypeName,
+        token_b: TypeName,
+        fee_tier: u64,
+        creator: address,
+        timestamp: u64,
+    }
+
+    public struct RegistryCreated has copy, drop {
+        registry_id: ID,
+        creator: address,
+    }
+
+    /// Initialize the pool registry (called once on deployment)
+    fun init(ctx: &mut TxContext) {
+        let registry = PoolRegistry {
+            id: object::new(ctx),
+            pools: table::new(ctx),
+            pool_count: 0,
+        };
+        
+        event::emit(RegistryCreated {
+            registry_id: object::id(&registry),
+            creator: tx_context::sender(ctx),
+        });
+
+        transfer::share_object(registry);
+    }
+
+    /// Create a new liquidity pool for a token pair
+    /// Returns the pool ID
+    public fun create_pool<TokenA, TokenB>(
+        registry: &mut PoolRegistry,
+        fee_tier: u64,
+        ctx: &mut TxContext
+    ): ID {
+        // Validate fee tier
+        assert!(
+            fee_tier == FEE_TIER_LOW || 
+            fee_tier == FEE_TIER_MEDIUM || 
+            fee_tier == FEE_TIER_HIGH,
+            E_INVALID_FEE_TIER
+        );
+
+        // Get type names
+        let token_a_type = type_name::get<TokenA>();
+        let token_b_type = type_name::get<TokenB>();
+
+        // Ensure tokens are different
+        assert!(token_a_type != token_b_type, E_IDENTICAL_TOKENS);
+
+        // Create pool key: tokenA_tokenB_fee
+        let pool_key = create_pool_key(token_a_type, token_b_type, fee_tier);
+
+        // Check if pool already exists
+        assert!(!table::contains(&registry.pools, pool_key), E_POOL_ALREADY_EXISTS);
+
+        // Create a unique pool ID
+        let pool_uid = object::new(ctx);
+        let pool_id = object::uid_to_inner(&pool_uid);
+        object::delete(pool_uid);
+
+        // Register the pool
+        table::add(&mut registry.pools, pool_key, pool_id);
+        registry.pool_count = registry.pool_count + 1;
+
+        // Emit pool created event
+        event::emit(PoolCreated {
+            pool_id,
+            token_a: token_a_type,
+            token_b: token_b_type,
+            fee_tier,
+            creator: tx_context::sender(ctx),
+            timestamp: tx_context::epoch(ctx),
+        });
+
+        pool_id
+    }
+
+    /// Helper function to create a unique pool key
+    fun create_pool_key(
+        token_a: TypeName,
+        token_b: TypeName,
+        fee_tier: u64
+    ): vector<u8> {
+        let key = vector::empty<u8>();
+        
+        // Convert TypeName to bytes and append
+        let a_bytes = type_name::into_string(token_a);
+        let b_bytes = type_name::into_string(token_b);
+        
+        vector::append(&mut key, *std::string::bytes(&a_bytes));
+        vector::push_back(&mut key, 45); // '-' separator
+        vector::append(&mut key, *std::string::bytes(&b_bytes));
+        vector::push_back(&mut key, 45); // '-' separator
+        
+        // Append fee tier
+        let fee_str = u64_to_ascii(fee_tier);
+        vector::append(&mut key, fee_str);
+        
+        key
+    }
+
+    /// Convert u64 to ASCII bytes
+    fun u64_to_ascii(mut num: u64): vector<u8> {
+        if (num == 0) {
+            return vector[48] // '0'
+        };
+
+        let mut result = vector::empty<u8>();
+        while (num > 0) {
+            let digit = ((num % 10) as u8) + 48; // Convert to ASCII
+            vector::push_back(&mut result, digit);
+            num = num / 10;
+        };
+        
+        vector::reverse(&mut result);
+        result
+    }
+
+    /// Check if a pool exists
+    public fun pool_exists(
+        registry: &PoolRegistry,
+        token_a: TypeName,
+        token_b: TypeName,
+        fee_tier: u64
+    ): bool {
+        let pool_key = create_pool_key(token_a, token_b, fee_tier);
+        table::contains(&registry.pools, pool_key)
+    }
+
+    /// Get pool ID for a token pair and fee tier
+    public fun get_pool_id(
+        registry: &PoolRegistry,
+        token_a: TypeName,
+        token_b: TypeName,
+        fee_tier: u64
+    ): ID {
+        let pool_key = create_pool_key(token_a, token_b, fee_tier);
+        *table::borrow(&registry.pools, pool_key)
+    }
+
+    /// Get total pool count
+    public fun get_pool_count(registry: &PoolRegistry): u64 {
+        registry.pool_count
+    }
+
+    /// Get supported fee tiers
+    public fun get_fee_tier_low(): u64 { FEE_TIER_LOW }
+    public fun get_fee_tier_medium(): u64 { FEE_TIER_MEDIUM }
+    public fun get_fee_tier_high(): u64 { FEE_TIER_HIGH }
+
+    #[test_only]
+    /// Create registry for testing
+    public fun init_for_testing(ctx: &mut TxContext) {
+        init(ctx);
+    }
+}
