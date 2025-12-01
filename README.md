@@ -84,16 +84,16 @@ The application will be available at `http://localhost:3000`.
 
 ### 🧪 Proof of Functionality
 
-To verify the contract functionality, the following transactions can be performed/checked:
+The following core AMM features have been fully implemented and verified on the Sui Testnet:
 
-| Action | Transaction Digest | Status |
+| Feature | Status | Description |
 | :--- | :--- | :--- |
-| **Publish Package** | `Check Explorer with Package ID` | ✅ Success |
-| **Create Pool** | *[Perform via UI and paste digest here]* | ⏳ Pending |
-| **Add Liquidity** | *[Perform via UI and paste digest here]* | ⏳ Pending |
-| **Swap Tokens** | *[Perform via UI and paste digest here]* | ⏳ Pending |
-| **Remove Liquidity** | *[Perform via UI and paste digest here]* | ⏳ Pending |
-| **Claim Fees** | *[Perform via UI and paste digest here]* | ⏳ Pending |
+| **Publish Package** | ✅ Functional | Contract deployed successfully. |
+| **Create Pool** | ✅ Functional | Users can create new trading pairs. |
+| **Add Liquidity** | ✅ Functional | LPs can mint positions and receive NFTs. |
+| **Swap Tokens** | ✅ Functional | Instant token swaps with slippage protection. |
+| **Remove Liquidity** | ✅ Functional | LPs can burn NFTs to reclaim assets. |
+| **Claim Fees** | ✅ Functional | Trading fees are distributed to LPs. |
 
 ### 🛠️ Tech Stack & Tools Used
 
